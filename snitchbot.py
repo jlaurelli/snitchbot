@@ -7,6 +7,7 @@ import re
 import sys
 import time
 
+import requests
 from requests.exceptions import Timeout
 from TwitterAPI import TwitterAPI
 
@@ -53,7 +54,7 @@ def main(fname):
         exit("File does not exist.")
     else:
         with open(fname) as f:
-            account = TwitterAPI(consumer_key=consumer_key
+            account = TwitterAPI(consumer_key=consumer_key,
                                  consumer_secret=consumer_secret,
                                  access_token_key=access_token_key,
                                  access_token_secret=access_token_secret)
@@ -63,17 +64,17 @@ def main(fname):
             posted = updater.post_comments(comments)
 
 
-class TwitterUpdater(object)
+class TwitterUpdater(object):
 
-    self._TIMEOUT_LIMIT = 60 * 5  # 5 minutes
+    _TIMEOUT_LIMIT = 60 * 5  # 5 minutes
 
-    self._TWITTER_LIMIT = 36      # 36 seconds
+    _TWITTER_LIMIT = 36      # 36 seconds
 
     # The following HTTP codes require special handling
 
-    self._UNAUTHORIZED_STATUS_CODES = [400, 401]
+    _UNAUTHORIZED_STATUS_CODES = [400, 401]
 
-    self._WAIT_STATUS_CODES = [420, 429, 502, 503, 504]
+    _WAIT_STATUS_CODES = [420, 429, 502, 503, 504]
 
     def __init__(self, account):
         self._account = account
@@ -87,28 +88,29 @@ class TwitterUpdater(object)
         @rtype:  bool
         """
         for comment in comments:
-            while True:
-                try:
-                # Only uncomment when ready
-                # response = _update_status(comment)
-                status = response.status_code
-                if status == 200:
-                    break
-                elif status in self._UNAUTHORIZED_STATUS_CODES:
-                    exit("Unauthorized to update status. Check your Twitter "
-                         "credentials.")
-                elif status == self._WAIT_STATUS_CODES:
-                    print("Twitter encountered a problem. Trying again a"
-                          "little later.")
-                    time.sleep(self._TIMEOUT_LIMIT)
-            except TwitterAPI.TwitterError.TwitterConnectionError(value):
-                pass
-            except TwitterAPI.TwitterError.TwitterRequestError(status_code):
-                pass
-            except TwitterAPI.TwitterError.TwitterError:
-                pass
-            except Timeout:
-                time.sleep(self._TIMEOUT_LIMIT)
+            pass
+            # while True:
+            #     try:
+            #     # Only uncomment when ready
+            #     # response = _update_status(comment)
+            #     status = response.status_code
+            #     if status == 200:
+            #         break
+            #     elif status in self._UNAUTHORIZED_STATUS_CODES:
+            #         exit("Unauthorized to update status. Check your Twitter "
+            #              "credentials.")
+            #     elif status == self._WAIT_STATUS_CODES:
+            #         print("Twitter encountered a problem. Trying again a"
+            #               "little later.")
+            #         time.sleep(self._TIMEOUT_LIMIT)
+            # except TwitterAPI.TwitterError.TwitterConnectionError(value):
+            #     pass
+            # except TwitterAPI.TwitterError.TwitterRequestError(status_code):
+            #     pass
+            # except TwitterAPI.TwitterError.TwitterError:
+            #     pass
+            # except Timeout:
+            #     time.sleep(self._TIMEOUT_LIMIT)
 
     def process_comments(content):
         """Collects all comments in the read Python module.
