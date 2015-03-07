@@ -1,6 +1,4 @@
-#! /usr/bin/env python
-
-from __future__ import absolute_import, print_function
+#! /usr/bin/env python3
 
 import os
 import re
@@ -9,13 +7,11 @@ import time
 
 import requests
 from requests.exceptions import Timeout
-from TwitterAPI import TwitterAPI
+from TwitterAPI import TwitterAPI, TwitterOAuth
 
 ###
 from pprint import pprint
 ###
-
-# Update this to Python 3 to get away from unicode problems
 
 
 USAGE = """
@@ -68,7 +64,7 @@ class TwitterUpdater(object):
 
     _TIMEOUT_LIMIT = 60 * 5  # 5 minutes
 
-    _TWITTER_LIMIT = 36      # 36 seconds
+    _UPDATE_LIMIT = 36      # 36 seconds
 
     # The following HTTP codes require special handling
 
@@ -145,7 +141,7 @@ class TwitterUpdater(object):
     def _update_status(comment):
         response = self._account.request("statuses/update",
                                          {"status": comment})
-        time.sleep(TWITTER_LIMIT)
+        time.sleep(_UPDATE_LIMIT)
 
         return response
 
