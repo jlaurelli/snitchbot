@@ -8,6 +8,7 @@ import unittest.mock as mock
 import snitchbot
 # from twitter.error import TwitterError
 
+
 from pprint import pprint
 
 
@@ -32,33 +33,35 @@ class ExitCommentsTests(unittest.TestCase):
 #             self.assertEqual(posted, True)
 
 
-# class ProcessCommentsTests(unittest.TestCase):
+class ProcessCommentsTests(unittest.TestCase):
 
-#     def test_comment_strings(self):
-#         def _check_comments(comment, expected):
-#             self.assertEqual(snitchbot.process_comments(comment), expected)
+    def test_comment_strings(self):
+        updater = snitchbot.TwitterUpdater("fake_account")
 
-#         _check_comments(["# Basic line"], ["Basic line"])
-#         _check_comments(["#! Script syntax"], [])
-#         _check_comments(["#No preceding whitespace"],
-#                         ["No preceding whitespace"])
-#         _check_comments(["#### Multiple hashes"], ["Multiple hashes"])
-#         _check_comments(["#     Proceeding whitespace"],
-#                         ["Proceeding whitespace"])
-#         _check_comments(["# \n Newline"], ["\n Newline"])
-#         _check_comments(["# \t Tab"], ["\t Tab"])
-#         _check_comments(['"""Docstring"""'], [])
+        def _check_comments(comment, expected):
+            self.assertEqual(updater.process_comments(comment), expected)
+
+        _check_comments(["# Basic line"], ["Basic line"])
+        _check_comments(["#! Script syntax"], [])
+        _check_comments(["#No preceding whitespace"],
+                        ["No preceding whitespace"])
+        _check_comments(["#### Multiple hashes"], ["Multiple hashes"])
+        _check_comments(["#     Proceeding whitespace"],
+                        ["Proceeding whitespace"])
+        _check_comments(["# \n Newline"], ["\n Newline"])
+        _check_comments(["# \t Tab"], ["\t Tab"])
+        _check_comments(['"""Docstring"""'], [])
 
 
 class MainTests(unittest.TestCase):
 
-    def test_main(self):
-        with mock.patch("snitchbot.process_comments", return_value=True) \
-        as process, mock.patch("snitchbot.post_comments", return_value=True) \
-        as post:
-            snitchbot.main("test_data.py")
-            process.assert_called_with(['"Just a valid test file"\n'])
-            post.assert_called_with(True)
+    # def test_main(self):
+    #     with mock.patch("snitchbot.TwitterUpdater.process_comments", return_value=True) \
+    #     as process, mock.patch("snitchbot.TwitterUpdater.post_comments", return_value=True) \
+    #     as post:
+    #         snitchbot.main("test_data.py")
+    #         process.assert_called_with(['"Just a valid test file"\n'])
+    #         post.assert_called_with(True)
 
     def test_main__not_Python_module(self):
         with mock.patch("snitchbot.exit", return_value=True) as exit:

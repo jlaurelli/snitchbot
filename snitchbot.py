@@ -16,23 +16,29 @@ from pprint import pprint
 
 USAGE = """
 Usage: python snitchbot.py PYTHON_FILE
-
+  
 Example: python snitchbot.py really_secret_document.py
 
 Notes: This fully supports processing Python files only.
 """
 
 
-def exit(message=None, usage=True):
+def exit(message=None, is_warn=False, usage=False):
     """Gracefully exits the script.
 
-    @param   message: The comments to be posted to the Twitter service.
-    @type    message: str, else None
+    @param   message: A message to display as part of the program exit.
+    @type    message: str | None
+    @param   is_warn: Print a warning as opposed to an error.
+    @type    is_warn: boolean
     @param:  usage: A message on the usage of the tool.
     @type:   usage: boolean
     """
     if message:
-        print("ERROR: {}\n".format(message))
+        if is_warn:
+            prefix = "WARN: {}\n"
+        else:
+            prefix = "ERROR: {}\n"
+        print(prefix.format(message))
     if usage:
         print(USAGE)
     sys.exit(1)
@@ -42,7 +48,7 @@ def main(fname):
     """Opens a Python file as command-line argument and runs the process.
 
     @param   fname: The command-line arguments ran with this script.
-    @type    fname: list of str
+    @type    fname: list[str]
     """
     if not fname.endswith(".py"):
         exit("Not a python file.")
@@ -50,10 +56,13 @@ def main(fname):
         exit("File does not exist.")
     else:
         with open(fname) as f:
-            account = TwitterAPI(consumer_key=consumer_key,
-                                 consumer_secret=consumer_secret,
-                                 access_token_key=access_token_key,
-                                 access_token_secret=access_token_secret)
+
+            # Get the required twitter credentials
+            oauth = TwitterOAuth.read_file()
+            account = TwitterAPI(consumer_key=oauth.consumer_key,
+                                 consumer_secret=oauth.consumer_secret,
+                                 access_token_key=oauth.access_token_key,
+                                 access_token_secret=oauth.access_token_secret)
 
             updater = TwitterUpdater(account)
             comments = updater.process_comments(f.readlines())
@@ -73,13 +82,18 @@ class TwitterUpdater(object):
     _WAIT_STATUS_CODES = [420, 429, 502, 503, 504]
 
     def __init__(self, account):
+        """Initializes a new TwitterUpdater object.
+
+        @param   account: The twitter account object to use for posting.
+        @type    account: C{TwitterAPI}
+        """
         self._account = account
 
-    def post_comments(comments):
+    def post_comments(self, comments):
         """Authenticates and updates the status with the aggregated comments.
 
         @param   comments: The comments to be posted to the Twitter service.
-        @type    comments: list of str
+        @type    comments: list[str]
         @return: True if successful
         @rtype:  bool
         """
@@ -108,13 +122,13 @@ class TwitterUpdater(object):
             # except Timeout:
             #     time.sleep(self._TIMEOUT_LIMIT)
 
-    def process_comments(content):
+    def process_comments(self, content):
         """Collects all comments in the read Python module.
 
         @param   content: The contents of a Python module.
-        @type    content: list of str
+        @type    content: list[str]
         @return: Only the lines that denote comments.
-        @rtype:  list of str
+        @rtype:  list[str]
         """
         # Match all hashes followed by a character. If it is an !, don't match.
         # Filter the string down (only remove whitespace afterwards).
@@ -134,11 +148,11 @@ class TwitterUpdater(object):
                 else:
                     comments.append(comment)
         if not comments:
-            exit("No comments found to post.")
+            exit("No comments found to post.", is_warn=True)
 
         return comments
 
-    def _update_status(comment):
+    def _update_status(self, comment):
         response = self._account.request("statuses/update",
                                          {"status": comment})
         time.sleep(_UPDATE_LIMIT)
