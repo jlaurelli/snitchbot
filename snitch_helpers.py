@@ -5,14 +5,13 @@ import sys
 from TwitterAPI import TwitterAPI, TwitterOAuth
 
 
-
 USAGE = """
-        Usage: python snitchbot.py PYTHON_FILE
-          
-        Example: python snitchbot.py really_secret_document.py
+Usage: python snitchbot.py PYTHON_FILE
+  
+Example: python snitchbot.py really_secret_document.py
 
-        Notes: This fully supports processing Python files only.
-        """
+Notes: This fully supports processing Python files only.
+"""
 
 
 # --- Helper Functions --------------------------------------------------------
@@ -27,15 +26,16 @@ def setup_twitter():
     @param:  usage: A message on the usage of the tool.
     @type:   usage: boolean
     """
-    oauth = TwitterOAuth.read_file()
+    oauth = TwitterOAuth.read_file("keys.txt")
     account = TwitterAPI(consumer_key=oauth.consumer_key,
                          consumer_secret=oauth.consumer_secret,
                          access_token_key=oauth.access_token_key,
                          access_token_secret=oauth.access_token_secret)
+
     return account
 
 
-def exit(message=None, is_warn=False, usage=False):
+def snitch_exit(message=None, is_warn=False, usage=False):
     """Gracefully exits the script.
 
     @param   message: A message to display as part of the program exit.
@@ -53,4 +53,5 @@ def exit(message=None, is_warn=False, usage=False):
         print(prefix.format(message))
     if usage:
         print(USAGE)
+        
     sys.exit(1)

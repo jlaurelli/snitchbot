@@ -5,7 +5,7 @@
 import os
 import sys
 
-from snitch_helpers import exit, setup_twitter
+from snitch_helpers import snitch_exit, setup_twitter
 from twitter_updater import TwitterUpdater
 
 
@@ -16,9 +16,9 @@ def main(fname):
     @type    fname: list[str]
     """
     if not fname.endswith(".py"):
-        exit("Not a python file.")
+        snitch_exit("Not a python file.")
     elif not os.path.isfile(fname):
-        exit("File does not exist.")
+        snitch_exit("File does not exist.")
     else:
         with open(fname) as f:
             # Get the required twitter credentials and run
@@ -31,5 +31,5 @@ def main(fname):
 if __name__ == "__main__":
     args = sys.argv
     if len(args) < 2:
-        exit("Must send in a Python file.", usage=True)
+        snitch_exit("Must send in a Python file.", usage=True)
     main(fname=args[1])
