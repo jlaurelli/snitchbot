@@ -114,6 +114,6 @@ class TwitterUpdater(object):
         """
         response = self._account.request("statuses/update",
                                          {"status": comment})
-        time.sleep(_UPDATE_LIMIT)
+        time.sleep(self._UPDATE_LIMIT)
 
-        return response.status
+        return response.status_code

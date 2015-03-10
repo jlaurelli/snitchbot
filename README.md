@@ -16,6 +16,12 @@ community. Please use this intelligently (by not using at all).
 python snitchbot.py really_secret_document.py
 ```
 
+# See it in action
+
+```
+https://twitter.com/snitch_bot
+```
+
 # TODO:
 
 Support files written in other languages.
